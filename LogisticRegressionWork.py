@@ -58,14 +58,14 @@ def flogistic(beta, lambduh, x=xtrain, y=ytrain):
     # y = vector of know classifications
     # Output
     # f = binary logistic regression loss function value
-    term1 = np.mean(np.log(1 + np.exp(-y*x.dot(beta)))) # logistic regression
-    term2 = lambduh*np.linalg.norm(beta)**2             # ridge regularization
+    term1 = np.mean(np.log(1 + np.exp(-y*x.dot(beta))))  # logistic regression
+    term2 = lambduh*np.linalg.norm(beta)**2              # ridge regularization
     f = term1 + term2
     return(f)
 
 
 def gradflogistic(beta, lambduh, x=xtrain, y=ytrain):
-    # Gradient of the binary logistic regression loss function equation with 
+    # Gradient of the binary logistic regression loss function equation with
     # l2 regularization
     # Inputs
     # beta = vector of logistic regression coefficients
@@ -182,6 +182,34 @@ def objectivePlot(f, betas, lambduh, x=xtrain, y=ytrain):
     plt.xlabel('Iteration')
     plt.ylabel('Objective value')
     plt.title('Objective value vs. iteration when lambda=' + str(lambduh))
+    
+    
+# Misclassication error
+def computeMisclassificationError(beta_opt, x, y):
+    y_pred = 1/(1+np.exp(-x.dot(beta_opt))) > 0.5
+    y_pred = y_pred*2 - 1       # Convert to +/- 1
+    return np.mean(y_pred != y)
+
+
+# Plot misclassification error
+def plotMisclassificationError(betas, x, y, save_file='', title=''):
+    niter = np.size(betas, 0)
+    errorMisclass = np.zeros(niter)
+    
+    for i in range(niter):
+        errorMisclass[i] = computeMisclassificationError(betas[i, :], x, y)
+        
+    fig, ax = plt.subplots()
+    ax.plot(range(1, niter + 1), errorMisclass, label='Misclassification Error')
+    plt.xlabel('Iteration')
+    plt.ylabel('Misclassification error')
+    if title:
+        plt.title(title)
+    ax.legend(loc='upper right')
+    if not save_file:
+        plt.show()
+    else:
+        plt.savefig(save_file)
 
 # %% Example Part B
 # Execute logistic regression model on the spam data set from above.
@@ -211,8 +239,14 @@ print(flogistic(np.squeeze(lr.coef_), lambduh, x=xtrain, y=ytrain))
 print('fastgraddescent')
 print(flogistic(betafast[-1, :], lambduh, x=xtrain, y=ytrain))
 
+# Plot misclassification error 
+plotMisclassificationError(betafast, x=xtrain, y=ytrain)
+
 # %% Find optimal lambda value
-lr_cv = sklearn.linear_model.LogisticRegressionCV(penalty='l2', fit_intercept=False, tol=10e-8, max_iter=1000)
-lr_cv.fit(xtrain, ytrain)
-optimal_lambda = lr_cv.C_[0]
-print('Optimal lambda=', optimal_lambda)
+# The value of the regularization parameter, lambda, was found using the 
+# following commands.
+
+# lr_cv = sklearn.linear_model.LogisticRegressionCV(penalty='l2', fit_intercept=False, tol=10e-8, max_iter=1000)
+# lr_cv.fit(xtrain, ytrain)
+# optimal_lambda = lr_cv.C_[0]
+# print('Optimal lambda=', optimal_lambda)
