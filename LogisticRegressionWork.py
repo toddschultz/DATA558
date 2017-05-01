@@ -150,7 +150,7 @@ def fastgraddescend(f, grad, lambduh, x=xtrain, y=ytrain, maxiter=1000, etatol=1
     eta = 1
     df = 1
     while (iter < maxiter and eta > etatol and df > ftol):
-        eta = backtracking(f, grad, beta, eta, lambduh, x=x, y=y)
+        eta = backtracking(f, grad, beta, lambduh, alpha=0.5, gamma=0.8, x=xtrain, y=ytrain, maxiter=1000)
         beta = theta - eta*grad(theta, lambduh, x=x, y=y)
         theta = beta + (beta - betam1)*iter/(iter+3)
         betam1 = copy.copy(beta)
