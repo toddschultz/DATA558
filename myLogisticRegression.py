@@ -132,6 +132,17 @@ def fastgraddescend(f, grad, lambduh, x, y, maxiter=1000, etatol=1e-12, ftol=1e-
     return(theta_vals)
 
 
+def myLogisticReg(lambduh, x, y, maxiter=1000):
+    # myLogisticReg computes the logistic regression coefficients to the
+    # provided training data with an L-2 norm regularization parameter.
+    # Inputs
+    # lambduh = value of the regularization parameter
+    # x = input/predictor training data
+    # y = output/response training labels
+    betas = fastgraddescend(flogistic, gradflogistic, lambduh, x, y, maxiter=1000)
+    return betas
+
+
 # Misclassication error
 def computeMisclassificationError(beta_opt, x, y):
     ypred = 1/(1+np.exp(-x.dot(beta_opt))) > 0.5

@@ -49,8 +49,8 @@ p = np.size(xtrain, 1)
 lambduh = 0.00069
 
 # Run algorithm
-betafast = lr.fastgraddescend(lr.flogistic, lr.gradflogistic, lambduh, x=xtrain, y=ytrain, maxiter=1000)
-lr.objectivePlot(lr.flogistic, betafast, lambduh, x=xtrain, y=ytrain)
+betas = lr.myLogisticReg(lambduh, x=xtrain, y=ytrain, maxiter=1000)
+lr.objectivePlot(lr.flogistic, betas, lambduh, x=xtrain, y=ytrain)
 
 # Run scikit-learn logisitic regression
 sklr = sklearn.linear_model.LogisticRegression(penalty='l2', C=1/(2*lambduh*ntrain), fit_intercept=False, tol=10e-8, max_iter=1000)
@@ -60,18 +60,18 @@ sklr.fit(xtrain, ytrain)
 print('Final beta coefficients')
 print('scikit learn')
 print(sklr.coef_)
-print('fastgraddescent')
-print(betafast[-1, :])
+print('myLogisticRegression')
+print(betas[-1, :])
 
 print()
 print('Final objective values')
 print('scikit learn')
 print(lr.flogistic(np.squeeze(sklr.coef_), lambduh, x=xtrain, y=ytrain))
-print('fastgraddescent')
-print(lr.flogistic(betafast[-1, :], lambduh, x=xtrain, y=ytrain))
+print('myLogisticRegression')
+print(lr.flogistic(betas[-1, :], lambduh, x=xtrain, y=ytrain))
 
 # Plot misclassification error
-lr.plotMisclassificationError(betafast, x=xtrain, y=ytrain)
+lr.plotMisclassificationError(betas, x=xtrain, y=ytrain)
 
 # %% Find optimal lambda value
 # The value of the regularization parameter, lambda, was found using the
